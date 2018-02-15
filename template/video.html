@@ -1,7 +1,23 @@
 <div class="booth" id="movieModalOpenMedium">
-    <webcam
+    <!-- <webcam
         channel="myChannel">
-    </webcam>
+    </webcam> -->
+    <h1>RecordRTC to Node.js</h1>
+        <p>
+            <video></video> 
+        </p><hr />
+        
+        <!-- <div>
+            <label id="percentage">0%</label>
+            <progress id="progress-bar" value=0></progress><br />
+        </div> -->
+            
+        <hr />
+
+        <div>
+            <button id="btn-start-recording" ng-click="startRecording();">Start Recording</button>
+            <button id="btn-stop-recording" ng-click="stopRecording();" disabled="">Stop Recording</button>
+        </div>
 </div>
 <!--    <webcam on-stream="onStream(stream)"
         on-access-denied="onError(err)"
