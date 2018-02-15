@@ -1,4 +1,4 @@
 app.constant('constant', {
     appName: 'WebRTC',
-    apiUrl: 'http://dev.credencys.com:3031/'
+    apiUrl: 'https://dev.credencys.com:3031/'
 });
