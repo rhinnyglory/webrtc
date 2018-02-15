@@ -12,7 +12,7 @@ app.config(function ($routeProvider) {
             });
 });
 
-app.controller("videoCtrl", ['$scope', '$http', '$window', function ($scope, $http, $window) {
+app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', function ($scope, $http, $window, constant) {
             var btnStartRecording = document.querySelector('#btn-start-recording');
             var btnStopRecording  = document.querySelector('#btn-stop-recording');
             
@@ -44,7 +44,7 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', function ($scope, $ht
                      dataElements.append('video' , file);
                     var post = $http({
                         method: "POST",
-                        url: "http://192.168.11.221:3030/user-media/upload",
+                        url: constant.apiUrl + "user-media/upload",
                         data: dataElements,
                          dataType: 'json',
                         processData: false,
