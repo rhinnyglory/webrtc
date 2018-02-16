@@ -49,12 +49,12 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
                         }
                     })
                 };
-            $scope.extenUrl = [];
-$scope.extenUrl = $location.url().split('/');
-console.log($scope.extenUrl);
-             if($scope.extenUrl[1] == 'extension'){
-                $scope.reload();
-            }
+//             $scope.extenUrl = [];
+// $scope.extenUrl = $location.url().split('/');
+// console.log($scope.extenUrl);
+//              if($scope.extenUrl[1] == 'extension'){
+//                 $scope.reload();
+//             }
            
 
 
