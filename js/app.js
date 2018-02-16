@@ -37,6 +37,7 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
             $scope.screenBlob;
             $scope.isAvail = false;
             var recorderOfScreen;
+            $scope.dataLoading = false;
             $scope.downloadUrl = constant.apiUrl + 'public/';
             $scope.reload = function(){
                     console.log("function")
@@ -58,14 +59,20 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
 //             }
            
 
-
+ $scope.dataloading = false;
             $scope.submitEmail = function(){
+                //alert($scope.email);
+                console.log("email", $scope.email);
+                $scope.dataloading = true;
                 if ($scope.email !== "") {
                     localStorage.setItem('email', $scope.email);
                     getChromeExtensionStatus('ajhifddimkapgcifgcodmmfdlknahffk', function(status) {
+                        console.log('okk going',status)
                         if(status == 'installed-enabled') {
+                            console.log('dca')
+                            window.location.href="#/record"
                             // chrome extension is installed & enabled.
-                            $location.path('/record');
+                           // $location.path('/record');
                         }
                         
                         if(status == 'installed-disabled') {
@@ -285,14 +292,11 @@ $scope.recordingsUrl = $location.url().split('/');
                          $scope.records = data.data.data;
                     })
                     .catch(function errorCallback(data) {
-                        //alert("Error");
-                        console.log("data",data);
-                        console.log("status",status);
+
                     });
             }
 
             $scope.openNewTab = function(url, link){
-                console.log(url,link);
                 $window.open(url+link, '_blank');
             };
     }]);
