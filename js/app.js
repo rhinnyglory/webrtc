@@ -281,11 +281,10 @@ $scope.recordingsUrl = $location.url().split('/');
                     });*/
 
                     $http({method : 'GET',url : constant.apiUrl + 'user-media', headers: {}})
-                    .success(function(data, status) {
-                        console.log(data);
-                         $scope.records = data.data;
+                    .then(function successCallback(data) {
+                         $scope.records = data.data.data;
                     })
-                    .error(function(data, status) {
+                    .catch(function errorCallback(data) {
                         //alert("Error");
                         console.log("data",data);
                         console.log("status",status);
