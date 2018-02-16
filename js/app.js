@@ -268,7 +268,7 @@ $scope.recordingsUrl = [];
 $scope.recordingsUrl = $location.url().split('/');
             if($scope.recordingsUrl[1] == 'recordings'){
                 console.log("recordings", $scope.recordingsUrl[1]);
-                $http.get(constant.apiUrl + 'user-media').
+                /*$http.get(constant.apiUrl + 'user-media').
                     then(function(response) {
                         $scope.records = response.data.data;
                         console.log("$scope.records", $scope.records);
@@ -278,6 +278,14 @@ $scope.recordingsUrl = $location.url().split('/');
                             $scope.records = response.data.data;
                         console.log("$scope.records.errors", $scope.records);
                         }
+                    });*/
+
+                    $http({method : 'GET',url : constant.apiUrl + 'user-media', headers: {}})
+                    .success(function(data, status) {
+                         $scope.records = response.data.data;
+                    })
+                    .error(function(data, status) {
+                        alert("Error");
                     });
             }
 
