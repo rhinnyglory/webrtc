@@ -285,7 +285,9 @@ $scope.recordingsUrl = $location.url().split('/');
                          $scope.records = response.data.data;
                     })
                     .error(function(data, status) {
-                        alert("Error");
+                        //alert("Error");
+                        console.log("data",data);
+                        console.log("status",status);
                     });
             }
 
