@@ -28,9 +28,7 @@ app.config(function ($routeProvider,$httpProvider) {
                 templateUrl: "template/recordings.html",
                 controller: "videoCtrl"
             });
-            $httpProvider.defaults.useXDomain = true;
-
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+            
 });
 
 app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$location',
