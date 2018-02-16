@@ -1,0 +1,21 @@
+<div class="container">
+<div class="col-md-6 col-md-offset-3">
+    <div class="form-area text-center">  
+        <form role="form" name="inquiryForm" ng-submit="submitEmail();" novalidate>
+            <div class="image">
+                <img src="css/img/logo.png" />
+            </div>
+        <br style="clear:both">
+                    <h3 style="margin-bottom: 25px; text-align: center;">Enter email to start session</h3>
+
+					<div class="form-group">
+						<input name="email" ng-model="email" id="eml" type="text" ng-pattern="eml_add" ng-required="true" autocomplete="off" placeholder="Email" class="form-control" >
+                        <span class="red-text" ng-if="inquiryForm.email.$error.required && inquiryForm.email.$dirty">Email is a required field</span>
+            
+            <span class="red-text" ng-show="inquiryForm.email.$error.pattern">Invalid Email</span>
+					</div>
+		      <button type="submit" id="submit" name="submit" class="btn btn-primary"  ng-disabled="inquiryForm.$invalid">Start Session</button>
+        </form>
+    </div>
+</div>
+</div>

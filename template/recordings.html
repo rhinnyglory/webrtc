@@ -1,0 +1,20 @@
+<div class="container">
+  <img src="css/img/logo.png" />
+  <h2>Recordings</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th colspan="2">Session</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="x in records">
+        <td>{{x.email}}</td>
+        <td colspan="2"><a ng-click="openNewTab(downloadUrl, x.media.video)">Video</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a ng-click="openNewTab(downloadUrl, x.media.screenCapture)">Screen Capture</a></td>
+        <td>{{x.createdAt|date}},&nbsp; &nbsp;{{x.createdAt|date:'shortTime'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

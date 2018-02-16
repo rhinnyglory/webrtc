@@ -1,25 +1,15 @@
-<div class="booth" id="movieModalOpenMedium">
-    <!-- <webcam
-        channel="myChannel">
-    </webcam> -->
-    <h1>RecordRTC to Node.js</h1>
+<div class="booth text-center" id="movieModalOpenMedium">
+	<div class="image">
+		<img src="css/img/logo.png" />
+	</div>
+    <h2 align="center">Intellects Remote Proctoring Platform Demo</h2>
         <p>
             <video></video> 
-        </p><hr />
-        
-        <!-- <div>
-            <label id="percentage">0%</label>
-            <progress id="progress-bar" value=0></progress><br />
-        </div> -->
-            
+        </p>
         <hr />
-
-        <div>
-            <button id="btn-start-recording" ng-click="startRecording();">Start Recording</button>
-            <button id="btn-stop-recording" ng-click="stopRecording();" disabled="">Stop Recording</button>
+        <div class="clearfix btn-grp">
+            <button id="btn-start-recording" class="btn btn-primary pull-left" ng-click="startRecording();">Start Recording</button>
+            <button id="btn-stop-recording" class="btn btn-primary pull-right" ng-click="stopRecording();" disabled="">Stop Recording</button>
         </div>
+		
 </div>
-<!--    <webcam on-stream="onStream(stream)"
-        on-access-denied="onError(err)"
-        on-streaming="onSuccess()">
-</webcam>-->

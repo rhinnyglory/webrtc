@@ -7,12 +7,101 @@ var app = angular.module("myApp", ["ngRoute", "webcam"]);
 app.config(function ($routeProvider) {
     $routeProvider
             .when("/", {
+                templateUrl: "template/email.html",
+                controller: "videoCtrl"
+            })
+            .when("/record", {
                 templateUrl: "template/video.html",
+                controller: "videoCtrl"
+            })
+            .when("/extension", {
+                templateUrl: "template/extension.html",
+                controller: "videoCtrl"
+            })
+            .when("/sorry", {
+                templateUrl: "template/sorry.html"
+            })
+            .when("/thanks", {
+                templateUrl: "template/thanku.html"
+            })
+            .when("/recordings", {
+                templateUrl: "template/recordings.html",
                 controller: "videoCtrl"
             });
 });
 
-app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', function ($scope, $http, $window, constant) {
+app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$location',
+ function ($scope, $http, $window, constant, $location) {
+            $scope.eml_add = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+            $scope.screenBlob;
+            $scope.isAvail = false;
+            var recorderOfScreen;
+            $scope.downloadUrl = constant.apiUrl + 'public/';
+
+            $scope.submitEmail = function(){
+                if ($scope.email !== "") {
+                    localStorage.setItem('email', $scope.email);
+                    getChromeExtensionStatus('ajhifddimkapgcifgcodmmfdlknahffk', function(status) {
+                        if(status == 'installed-enabled') {
+                            // chrome extension is installed & enabled.
+                            $location.path('/record');
+                        }
+                        
+                        if(status == 'installed-disabled') {
+                            // chrome extension is installed but disabled.
+                            alert("Please enable your screen sharing extension....")
+                        }
+                        
+                        if(status == 'not-installed') {
+                            // chrome extension is not installed
+                            $location.path('/extension');
+                        }
+                        
+                        if(status == 'not-chrome') {
+                            // using non-chrome browser
+                            $location.path('/record');
+                        }
+                    });
+                }
+            }
+
+            function captureScreen(cb) {
+                getScreenId(function (error, sourceId, screen_constraints) {
+                    navigator.mediaDevices.getUserMedia(screen_constraints).then(cb).catch(function(error) {
+                      if (error) {
+                                var url = (constant.env === 'dev' && constant.env != undefined) ? constant.pageUrl + 'sorry' : constant.pageUrl + 'sorry'
+                                $window.location.href = url;
+                      }
+                    });
+                });
+            }
+            function captureCamera(cb) {
+                navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(cb);
+            }
+            function keepStreamActive(stream) {
+                var video = document.createElement('video');
+                video.muted = true;
+                setSrcObject(stream, video);
+                video.style.display = 'none';
+                (document.body || document.documentElement).appendChild(video);
+            }
+
+            $scope.getShareScreen=function(){
+                captureScreen(function(screen) {
+                    screen.width = window.screen.width;
+                    screen.height = window.screen.height;
+                    screen.fullcanvas = true;recorderOfScreen = RecordRTC(screen, {
+                        type: 'video',
+                        mimeType: 'video/webm'
+                    });
+                    recorderOfScreen.startRecording();
+            });
+            }
+
+            $scope.stopScreenRecording = function(){
+            }
+            
+
             var btnStartRecording = document.querySelector('#btn-start-recording');
             var btnStopRecording  = document.querySelector('#btn-stop-recording');
             
@@ -22,26 +111,26 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', function 
             var percentage = document.querySelector('#percentage');
             
             var recorder;
-
-            // reusable helpers
             
             // this function submits recorded blob to nodejs server
             function postFiles() {
                 var blob = recorder.getBlob();
-
-                // getting unique identifier for the file name
+                   var blobs = recorderOfScreen.getBlob();
                 var fileName = generateRandomString() + '.webm';
+                var screenFile = generateRandomString() + '.webm';
                 
                 var file = new File([blob], fileName, {
                     type: 'video/webm'
                 });
 
-//                 videoElement.src = '';
-//                 videoElement.poster = '/ajax-loader.gif';
-// // 
+                var fileTwo = new File([blobs], screenFile, {
+                    type: 'video/webm'
+                });
                var dataElements = new FormData();
-                    dataElements.append('email' , 'rhinny.glory@credencys.com');
+                    dataElements.append('email' , localStorage.getItem('email'));
+                    console.log(localStorage.getItem('email'))
                      dataElements.append('video' , file);
+                     dataElements.append('screenCaptureVideo' , fileTwo);
                     var post = $http({
                         method: "POST",
                         url: constant.apiUrl + "user-media/upload",
@@ -106,7 +195,6 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', function 
                     audio: true,
                     video: true
                 };
-                alert("audio:",session.audio)
                 navigator.getUserMedia(session, success_callback, function(error) {
                     alert('Unable to capture your camera. Please check console logs.');
                     console.error(error);
@@ -115,10 +203,8 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', function 
 
             // UI events handling
             $scope.startRecording = function(){
-                // console.log("started");
-                // btnStartRecording.onclick = function() {
                     btnStartRecording.disabled = true;
-                    
+                    $scope.getShareScreen();
                     captureUserMedia(function(stream) {
                         mediaStream = stream;
                         
@@ -141,117 +227,35 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', function 
             
 
             $scope.stopRecording = function(){
-                // console.log("stopped");
-                // btnStopRecording.onclick = function() {
                     btnStartRecording.disabled = false;
                     btnStopRecording.disabled = true;
-                    
+                    recorderOfScreen.stopRecording();
                     recorder.stopRecording(postFiles);
-                    // var blob = recorder.getBlob();
-// console.log(blob,'bloddd')
-// return false;
-                    // getting unique identifier for the file name
-                    // var fileName = generateRandomString() + '.webm';
-                    
-                    // var file = new File([blob], fileName, {
-                    //     type: 'video/webm'
-                    // });
-                    // console.log(file,'file')
-                    // var header ={ "Access-Control-Allow-Origin": "*"};
-                    // videoElement.src = '';
-                    // // videoElement.poster = '/ajax-loader.gif';
-                    // var dataElements = new FormData();
-                    // dataElements.append('email' , 'rhinny.glory@credencys.com');
-                    //  dataElements.append('video' , file);
-                    //  console.log(file, "file")
-                    // // dataElements.video = file;
-                    // console.log(header,"Header");
-                    // console.log(dataElements,"Hejader");
-                    // // debugger;
-                    // var post = $http({
-                    //     method: "POST",
-                    //     url: "http://192.168.11.221:3030/user-media/upload",
-                    //     data: dataElements,
-                    //      dataType: 'json',
-                    //     processData: false,
-                    //    contentType: false,
-                    //     headers: {'Content-Type': undefined}
-                    // });
-                    // console.log(post,'post')
-         
-                    // post.success(function (data, status) {
-                    //     document.querySelector('#footer-h2').innerHTML = '<a href="' + videoElement.src + '">' + videoElement.src + '</a>';
-                    //     // $window.alert("Hello: " + data.Name + " .\nCurrent Date and Time: " + data.DateTime);
-                    // });
-         
-                    // post.error(function (data, status) {
-                    //     $window.alert(data.Message);
-                    // });
-
-
-                    // xhr('192.168.11.221:3030/user-media/upload', file, function(responseText) {
-                    //     var fileURL = JSON.parse(responseText).fileURL;
-
-                    //     console.info('fileURL', fileURL);
-                    //     videoElement.src = fileURL;
-                    //     videoElement.play();
-                    //     videoElement.muted = false;
-                    //     videoElement.controls = true;
-
-                    //     document.querySelector('#footer-h2').innerHTML = '<a href="' + videoElement.src + '">' + videoElement.src + '</a>';
-                    // });
                     
                     if(mediaStream) mediaStream.stop();
-                // };
+                    $location.path('/thanks');
             }
 
             window.onbeforeunload = function() {
                 startRecording.disabled = false;
             };
-        // $scope.myChannel = {
-        //     // the fields below are all optional
-        //     videoHeight: 800,
-        //     videoWidth: 600,
-        //     video: null // Will reference the video element on success
-        // };
 
-        // navigator.getUserMedia = navigator.getUserMedia ||
-        //         navigator.webkitGetUserMedia ||
-        //         navigator.mediaDevices.getUserMedia;
+        navigator.getUserMedia = navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia;
 
-        // if (navigator.getUserMedia) {
-        //     navigator.getUserMedia({audio: true, video: {width: 1280, height: 720}},
-        //             function (stream) {
-        //                 var video = document.querySelector('video');
-        //                 video.srcObject = stream;
-        //                 video.onloadedmetadata = function (e) {
-        //                     video.play();
-        //                 };
-        //             },
-        //             function (err) {
-        //                 console.log("The following error occurred: " + err.name);
-        //             }
-        //     );
-        // } else {
-        //     console.log("getUserMedia not supported");
-        // }
-//    var video = angular.element('#video'),
-//        vendorUrl = window.URL || window.webkitURL;
-//        
-//        navigator.getMedia = navigator.getUserMedia ||
-//                             navigator.webkitGetUserMedia ||
-//                             navigator.mozGetUserMedia ||
-//                             navigator.msGetUserMedia;
-//                     console.log(video,"video");
-//                     
-//       navigator.getMedia({
-//          video: true,
-//          audio: false
-//       }, function(stream){
-////           video.src = vendorUrl.createObjectURL(stream);
-//           video.src = window.URL.createObjectURL(stream);;
-//           video.play();
-//   }, function(error){
-//           console.log(error);
-//       });
+$scope.recordingsUrl = [];
+$scope.recordingsUrl = $location.url().split('/');
+            if($scope.recordingsUrl[1] == 'recordings'){
+                console.log("recordings", $scope.recordingsUrl[1]);
+                $http.get(constant.apiUrl + 'user-media').
+                    then(function(response) {
+                        $scope.records = response.data.data;
+                        console.log("$scope.records", $scope.records);
+                    });
+            }
+
+            $scope.openNewTab = function(url, link){
+                console.log(url,link);
+                $window.open(url+link, '_blank');
+            };
     }]);

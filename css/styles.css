@@ -8,9 +8,17 @@ and open the template in the editor.
     Author     : rhinny
 */
 .booth {
-    width: 400px;
-    height: 300px;
+	align-content: center;
+    width: 70%;
+    height: 75%;
     background: #ffffff;
     border: 10px solid #ddd;
     margin: 0 auto;
+}
+
+.image {
+	margin-top: 10%
+}
+.btn-grp {
+	padding: 10px; padding-top: 0;
 }
