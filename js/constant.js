@@ -1,6 +1,6 @@
 app.constant('constant', {
     appName: 'WebRTC',
-    apiUrl: 'http://192.168.11.221:3030/',
-    pageUrl: 'http://localhost/ANG_webrtc_POC/#/',
-
+    env: 'dev',
+    pageUrl: 'https://dev.credencys.com/webrtc/front/#/',
+    apiUrl: 'https://dev.credencys.com:3031/'
 });

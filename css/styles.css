@@ -7,6 +7,10 @@ and open the template in the editor.
     Created on : 12 Feb, 2018, 4:27:24 PM
     Author     : rhinny
 */
+
+.h2, h2 {
+    font-size: 22px;
+}
 .booth {
 	align-content: center;
     width: 70%;
@@ -21,4 +25,10 @@ and open the template in the editor.
 }
 .btn-grp {
 	padding: 10px; padding-top: 0;
+}
+
+.red-text { color: red;  }
+
+@media screen only (max-width: 768px) {
+	.booth { width: 93%; }
 }

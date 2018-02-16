@@ -37,6 +37,26 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
             $scope.isAvail = false;
             var recorderOfScreen;
             $scope.downloadUrl = constant.apiUrl + 'public/';
+            $scope.reload = function(){
+                    console.log("function")
+                    document.addEventListener('visibilitychange', function (visible) {
+                        console.log(visible, "visible")
+                        if(document.visibilityState !== 'hidden'){
+                            console.log("visible");
+                            // $location.path('/record');
+                            $window.location.href = constant.pageUrl + 'record';
+                            // location.reload();
+                        }
+                    })
+                };
+            $scope.extenUrl = [];
+$scope.extenUrl = $location.url().split('/');
+console.log($scope.extenUrl);
+             if($scope.extenUrl[1] == 'extension'){
+                $scope.reload();
+            }
+           
+
 
             $scope.submitEmail = function(){
                 if ($scope.email !== "") {
