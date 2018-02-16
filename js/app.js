@@ -282,7 +282,8 @@ $scope.recordingsUrl = $location.url().split('/');
 
                     $http({method : 'GET',url : constant.apiUrl + 'user-media', headers: {}})
                     .success(function(data, status) {
-                         $scope.records = response.data.data;
+                        console.log(data);
+                         $scope.records = data.data;
                     })
                     .error(function(data, status) {
                         //alert("Error");
