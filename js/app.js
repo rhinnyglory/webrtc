@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 var app = angular.module("myApp", ["ngRoute", "webcam"]);
-app.config(function ($routeProvider) {
+app.config(function ($routeProvider,$httpProvider) {
     $routeProvider
             .when("/", {
                 templateUrl: "template/email.html",
@@ -28,6 +28,9 @@ app.config(function ($routeProvider) {
                 templateUrl: "template/recordings.html",
                 controller: "videoCtrl"
             });
+            $httpProvider.defaults.useXDomain = true;
+
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
 
 app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$location',
