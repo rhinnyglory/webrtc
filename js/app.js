@@ -272,6 +272,7 @@ $scope.recordingsUrl = $location.url().split('/');
                         $scope.records = response.data.data;
                         console.log("$scope.records", $scope.records);
                     },function(errors){
+                        console.log("errors",errors);
                         if(errors.data.data !== undefined && errors.data.data.length > 0 ){
                             $scope.records = response.data.data;
                         console.log("$scope.records.errors", $scope.records);
