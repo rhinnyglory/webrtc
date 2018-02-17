@@ -67,12 +67,9 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
                 if ($scope.email !== "") {
                     localStorage.setItem('email', $scope.email);
                     getChromeExtensionStatus('ajhifddimkapgcifgcodmmfdlknahffk', function(status) {
-                        console.log('okk going',status)
                         if(status == 'installed-enabled') {
-                            console.log('dca')
-                            window.location.href="#/record"
                             // chrome extension is installed & enabled.
-                           // $location.path('/record');
+                            window.location.href="#/record"
                         }
                         
                         if(status == 'installed-disabled') {
@@ -82,7 +79,8 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
                         
                         if(status == 'not-installed') {
                             // chrome extension is not installed
-                            $location.path('/extension');
+                            console.log('okk going',status)
+                            window.location.href="#/extension"
                         }
                         
                         if(status == 'not-chrome') {
