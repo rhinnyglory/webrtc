@@ -40,29 +40,49 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
             $scope.dataLoading = false;
             $scope.downloadUrl = constant.apiUrl + 'public/';
             $scope.reload = function(){
-                    console.log("function")
                     document.addEventListener('visibilitychange', function (visible) {
-                        console.log(visible, "visible")
                         if(document.visibilityState !== 'hidden'){
-                            console.log("visible");
                             // $location.path('/record');
-                            $window.location.href = constant.pageUrl + 'record';
+                            // $window.location.href = constant.pageUrl + 'record';
+                            window.location.href="#/record"
                             // location.reload();
                         }
                     })
                 };
-//             $scope.extenUrl = [];
-// $scope.extenUrl = $location.url().split('/');
-// console.log($scope.extenUrl);
-//              if($scope.extenUrl[1] == 'extension'){
-//                 $scope.reload();
-//             }
+            $scope.extenUrl = [];
+            $scope.extenUrl = $location.url().split('/');
+             if($scope.extenUrl[1] == 'extension'){
+                $scope.reload();
+            }
+
+            if ($scope.extenUrl[1] == 'record') {
+                getChromeExtensionStatus('ajhifddimkapgcifgcodmmfdlknahffk', function(status) {
+                        if(status == 'installed-enabled') {
+                            // chrome extension is installed & enabled.
+                            window.location.href="#/record"
+                        }
+                        
+                        if(status == 'installed-disabled') {
+                            // chrome extension is installed but disabled.
+                            alert("Please enable your screen sharing extension....")
+                        }
+                        
+                        if(status == 'not-installed') {
+                            // chrome extension is not installed
+                            alert("Warning! You must install the extension...")
+                            window.location.href="#/extension"
+                        }
+                        
+                        if(status == 'not-chrome') {
+                            // using non-chrome browser
+                            $location.path('/record');
+                        }
+                    });
+            }
            
 
- $scope.dataloading = false;
+            $scope.dataloading = false;
             $scope.submitEmail = function(){
-                //alert($scope.email);
-                console.log("email", $scope.email);
                 $scope.dataloading = true;
                 if ($scope.email !== "") {
                     localStorage.setItem('email', $scope.email);
@@ -79,7 +99,6 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
                         
                         if(status == 'not-installed') {
                             // chrome extension is not installed
-                            console.log('okk going',status)
                             window.location.href="#/extension"
                         }
                         
@@ -91,12 +110,14 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
                 }
             }
 
+
+
             function captureScreen(cb) {
                 getScreenId(function (error, sourceId, screen_constraints) {
                     navigator.mediaDevices.getUserMedia(screen_constraints).then(cb).catch(function(error) {
                       if (error) {
-                                var url = (constant.env === 'dev' && constant.env != undefined) ? constant.pageUrl + 'sorry' : constant.pageUrl + 'sorry'
-                                $window.location.href = url;
+                        var url = (constant.env === 'dev' && constant.env != undefined) ? constant.pageUrl + 'sorry' : constant.pageUrl + 'sorry'
+                        $window.location.href = url;
                       }
                     });
                 });
@@ -116,7 +137,8 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
                 captureScreen(function(screen) {
                     screen.width = window.screen.width;
                     screen.height = window.screen.height;
-                    screen.fullcanvas = true;recorderOfScreen = RecordRTC(screen, {
+                    screen.fullcanvas = true;
+                    recorderOfScreen = RecordRTC(screen, {
                         type: 'video',
                         mimeType: 'video/webm'
                     });
@@ -272,7 +294,6 @@ app.controller("videoCtrl", ['$scope', '$http', '$window', 'constant', '$locatio
 $scope.recordingsUrl = [];
 $scope.recordingsUrl = $location.url().split('/');
             if($scope.recordingsUrl[1] == 'recordings'){
-                console.log("recordings", $scope.recordingsUrl[1]);
                 /*$http.get(constant.apiUrl + 'user-media').
                     then(function(response) {
                         $scope.records = response.data.data;
@@ -285,11 +306,10 @@ $scope.recordingsUrl = $location.url().split('/');
                         }
                     });*/
 
-                    $http({method : 'GET',url : constant.apiUrl + 'user-media', headers: {'If-None-Match':''}})
+                    $http({method : 'GET',url : constant.apiUrl + 'user-media', headers: {'If-None-Match':'', 'Access-Control-Allow-Origin': ''}})
                     .then(function successCallback(data) {
                          $scope.records = data.data.data;
-                    })
-                    .catch(function errorCallback(data) {
+                    }).catch(function errorCallback(data) {
 
                     });
 
