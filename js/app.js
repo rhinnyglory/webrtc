@@ -285,13 +285,15 @@ $scope.recordingsUrl = $location.url().split('/');
                         }
                     });*/
 
-                    $http({method : 'GET',url : constant.apiUrl + 'user-media', headers: {}})
+                    $http({method : 'GET',url : constant.apiUrl + 'user-media', headers: {'If-None-Match':''}})
                     .then(function successCallback(data) {
                          $scope.records = data.data.data;
                     })
                     .catch(function errorCallback(data) {
 
                     });
+
+
             }
 
             $scope.openNewTab = function(url, link){
